@@ -1,6 +1,6 @@
 # vultr.js
 
-This node.js is a simple and complete port of the [vultr api](https://www.vultr.com/api/) in node.js.
+This is a simple and complete port of the [vultr api](https://www.vultr.com/api/) in node.js.
 
 ## Installation
 
