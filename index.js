@@ -1,6 +1,6 @@
 'use strict';
 var request = require('request');
-var token;
+var token = "";
 
 /**
  * Check if there is an error.
@@ -21,7 +21,7 @@ function checkError(code) {
  * @param callback {Function}
  */
 function doRequest(action, callback) {
-  request('https://api.vultr.com' + action, function (error, response, body) {
+  request({url: 'https://api.vultr.com' + action, headers: {'API-Key': token}}, function (error, response, body) {
     try {
       if (error) throw error;
       checkError(response.statusCode);
@@ -39,7 +39,7 @@ function doRequest(action, callback) {
  * @param callback {Function}
  */
 function doPostRequest(action, data, callback) {
-  request({url: 'https://api.vultr.com' + action, formData: data, method: 'POST'}, function (error, response, body) {
+  request({url: 'https://api.vultr.com' + action, formData: data, method: 'POST', headers: {'API-Key': token}}, function (error, response, body) {
     try {
       if (error) throw error;
       checkError(response.statusCode);
