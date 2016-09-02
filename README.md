@@ -30,3 +30,19 @@ vultr.getAccountInfo(function (err, data) {
   console.log(data);
 });
 ```
+
+Get plans
+```javascript
+vultr.getPlans(function(err, data) {
+  if (err) throw err;
+  console.log(data);
+});
+```
+
+Create new server named helloworld at Paris with 768 MB of ram and with Debian 8 jessie 
+```javascript
+vultr.createServer({DCID: 24, VPSPLANID: 29, OSID: 194, label: 'helloworld'}, function (err, data) {
+  if (err) throw err;
+  console.log(data);
+});
+```
