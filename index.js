@@ -7,12 +7,20 @@ var token = "";
  * @param code {int} Request status code.
  */
 function checkError(code) {
-  if (code == 400) throw new Error('Invalid API location. Check the URL that you are using.');
-  else if (code == 403) throw new Error('Invalid or missing API key. Check that your API key is present and matches your assigned key.');
-  else if (code == 405) throw new Error('Invalid HTTP method. Check that the method (POST|GET) matches what the documentation indicates.');
-  else if (code == 412) throw new Error('Request failed. Check the response body for a more detailed description.');
-  else if (code == 500) throw new Error('Internal server error. Try again at a later time.');
-  else if (code == 503) throw new Error('Rate limit hit. API requests are limited to an average of 2/s. Try your request again later.');
+  switch (code) {
+    case 400:
+      throw new Error('Invalid API location. Check the URL that you are using.');
+    case 403:
+      throw new Error('Invalid or missing API key. Check that your API key is present and matches your assigned key.');
+    case 405:
+      throw new Error('Invalid HTTP method. Check that the method (POST|GET) matches what the documentation indicates.');
+    case 412:
+      throw new Error('Request failed. Check the response body for a more detailed description.');
+    case 500:
+      throw new Error('Internal server error. Try again at a later time.');
+    case 503:
+      throw new Error('Rate limit hit. API requests are limited to an average of 2/s. Try your request again later.');
+  }
 }
 
 /**
@@ -20,14 +28,14 @@ function checkError(code) {
  * @param action {String}
  * @param callback {Function}
  */
-function doRequest(action, callback) {
+function doGetRequest(action, callback) {
   request({url: 'https://api.vultr.com' + action, headers: {'API-Key': token}}, function (error, response, body) {
     try {
       if (error) throw error;
       checkError(response.statusCode);
-      callback(null, body);
+      callback(null, JSON.parse(body));
     } catch (e) {
-      callback(e, body);
+      callback(e, JSON.parse(body));
     }
   })
 }
@@ -48,9 +56,9 @@ function doPostRequest(action, data, callback) {
     try {
       if (error) throw error;
       checkError(response.statusCode);
-      callback(null, body);
+      callback(null, JSON.parse(body));
     } catch (e) {
-      callback(e, body);
+      callback(e, JSON.parse(body));
     }
   })
 }
@@ -68,7 +76,7 @@ module.exports = {
    * @param callback
    */
   getAccountInfo: function (callback) {
-    doRequest('/v1/account/info', callback);
+    doGetRequest('/v1/account/info', callback);
   },
   /**
    * Retrieve a list of available applications.
@@ -76,21 +84,21 @@ module.exports = {
    * @param callback
    */
   getApplications: function (callback) {
-    doRequest('/v1/app/list', callback);
+    doGetRequest('/v1/app/list', callback);
   },
   /**
    * Retrieve information about the current API key.
    * @param callback
    */
   getAuthInfo: function (callback) {
-    doRequest('/v1/auth/info', callback);
+    doGetRequest('/v1/auth/info', callback);
   },
   /**
    * List all backups on the current account.
    * @param callback
    */
   getBackups: function (callback) {
-    doRequest('/v1/backup/list', callback);
+    doGetRequest('/v1/backup/list', callback);
   },
   /**
    * Attach a block storage subscription to a VPS subscription.
@@ -138,7 +146,7 @@ module.exports = {
    * @param callback
    */
   getBlocks: function (callback) {
-    doRequest('/v1/block/list', callback);
+    doGetRequest('/v1/block/list', callback);
   },
   /**
    * Resize the block storage volume to a new size.
@@ -187,7 +195,7 @@ module.exports = {
    * @param callback
    */
   getDomains: function (callback) {
-    doRequest('/v1/dns/list', callback);
+    doGetRequest('/v1/dns/list', callback);
   },
   /**
    * List all the records associated with a particular domain.
@@ -195,7 +203,7 @@ module.exports = {
    * @param callback
    */
   getRecords: function (domain, callback) {
-    doRequest('/v1/dns/records?domain=' + domain, callback);
+    doGetRequest('/v1/dns/records?domain=' + domain, callback);
   },
   /**
    * Update a DNS record.
@@ -210,7 +218,7 @@ module.exports = {
    * @param callback
    */
   getImages: function (callback) {
-    doRequest('/v1/iso/list', callback);
+    doGetRequest('/v1/iso/list', callback);
   },
   /**
    * Retrieve a list of available operating systems.
@@ -218,7 +226,7 @@ module.exports = {
    * @param callback
    */
   getOs: function (callback) {
-    doRequest('/v1/os/list', callback);
+    doGetRequest('/v1/os/list', callback);
   },
   /**
    * Retrieve a list of all active plans. Plans that are no longer available will not be shown.
@@ -230,7 +238,7 @@ module.exports = {
    * @param callback
    */
   getPlans: function (callback) {
-    doRequest('/v1/plans/list', callback);
+    doGetRequest('/v1/plans/list', callback);
   },
   /**
    * Retrieve a list of all active vc2 plans.
@@ -241,7 +249,7 @@ module.exports = {
    * @param callback
    */
   getVC2Plans: function (callback) {
-    doRequest('/v1/plans/list', callback);
+    doGetRequest('/v1/plans/list', callback);
   },
   /**
    * Retrieve a list of all active vdc2 plans. Plans that are no longer available will not be shown.
@@ -251,7 +259,7 @@ module.exports = {
    * @param callback
    */
   getVDC2Plans: function (callback) {
-    doRequest('/v1/plans/list_vdc2', callback);
+    doGetRequest('/v1/plans/list_vdc2', callback);
   },
   /**
    * Retrieve a list of the VPSPLANIDs currently available in this location.
@@ -261,7 +269,7 @@ module.exports = {
    * @param callback
    */
   getRegionAvailability: function (dcid, callback) {
-    doRequest('/v1/regions/availability?DCID=' + dcid, callback);
+    doGetRequest('/v1/regions/availability?DCID=' + dcid, callback);
   },
   /**
    * Retrieve a list of all active regions.
@@ -269,7 +277,7 @@ module.exports = {
    * @param callback
    */
   getRegions: function (callback) {
-    doRequest('/v1/regions/list', callback);
+    doGetRequest('/v1/regions/list', callback);
   },
   /**
    * Attach a reserved IP to an existing subscription.
@@ -318,7 +326,7 @@ module.exports = {
    * @param callback
    */
   getIps: function (callback) {
-    doRequest('/v1/reservedip/list', callback);
+    doGetRequest('/v1/reservedip/list', callback);
   },
   /**
    * Changes the virtual machine to a different application. All data will be permanently lost.
@@ -336,7 +344,7 @@ module.exports = {
    * @param callback
    */
   getServerChangeApplicationsAvailable: function (subid, callback) {
-    doRequest('/v1/server/app_change_list?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/app_change_list?SUBID=' + subid, callback);
   },
   /**
    * Disables automatic backups on a server. Once disabled, backups can only be enabled again by customer support.
@@ -376,7 +384,7 @@ module.exports = {
    * @param callback
    */
   getServerBandwidth: function (subid, callback) {
-    doRequest('/v1/server/bandwidth?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/bandwidth?SUBID=' + subid, callback);
   },
   /**
    * Create a new virtual machine. You will start being billed for this immediately.
@@ -422,7 +430,7 @@ module.exports = {
    * @param callback
    */
   getServerApplicationInfo: function (subid, callback) {
-    doRequest('/v1/server/get_app_info?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/get_app_info?SUBID=' + subid, callback);
   },
   /**
    * Retrieves the (base64 encoded) user-data for this subscription.
@@ -430,7 +438,7 @@ module.exports = {
    * @param callback
    */
   getServerUserData: function (subid, callback) {
-    doRequest('/v1/server/get_user_data?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/get_user_data?SUBID=' + subid, callback);
   },
   /**
    * Halt a virtual machine. This is a hard power off (basically, unplugging the machine).
@@ -489,7 +497,7 @@ module.exports = {
    * @param callback
    */
   getServers: function (callback) {
-    doRequest('/v1/server/list', callback);
+    doGetRequest('/v1/server/list', callback);
   },
   /**
    * List the IPv4 information of a virtual machine.
@@ -498,7 +506,7 @@ module.exports = {
    * @param callback
    */
   getServerIpsV4: function (subid, callback) {
-    doRequest('/v1/server/list_ipv4?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/list_ipv4?SUBID=' + subid, callback);
   },
   /**
    * List the IPv6 information of a virtual machine.
@@ -508,7 +516,7 @@ module.exports = {
    * @param callback
    */
   getServerIpsV6: function (subid, callback) {
-    doRequest('/v1/server/list_ipv6?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/list_ipv6?SUBID=' + subid, callback);
   },
   /**
    * Determine what other subscriptions are hosted on the same physical host as a given subscription.
@@ -516,7 +524,7 @@ module.exports = {
    * @param callback
    */
   getServerNeighbors: function (subid, callback) {
-    doRequest('/v1/server/neighbors?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/neighbors?SUBID=' + subid, callback);
   },
   /**
    * Changes the virtual machine to a different operating system. All data will be permanently lost.
@@ -534,7 +542,7 @@ module.exports = {
    * @param callback
    */
   getServerOsAvailable: function (subid, callback) {
-    doRequest('/v1/server/os_change_list?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/os_change_list?SUBID=' + subid, callback);
   },
   /**
    * Reboot a virtual machine. This is a hard reboot (basically, unplugging the machine).
@@ -595,7 +603,7 @@ module.exports = {
    * @param callback
    */
   getServerIpV6Reverse: function (subid, callback) {
-    doRequest('/v1/server/reverse_list_ipv6?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/reverse_list_ipv6?SUBID=' + subid, callback);
   },
   /**
    * Set a reverse DNS entry for an IPv4 address of a virtual machine.
@@ -647,7 +655,7 @@ module.exports = {
    * @param callback
    */
   getServerUpgradePlanAvailable: function (subid, callback) {
-    doRequest('/v1/server/upgrade_plan_list?SUBID=' + subid, callback);
+    doGetRequest('/v1/server/upgrade_plan_list?SUBID=' + subid, callback);
   },
   /**
    * Create a snapshot from an existing virtual machine. The virtual machine does not need to be stopped.
@@ -670,7 +678,7 @@ module.exports = {
    * @param callback
    */
   getSnapshots: function (callback) {
-    doRequest('/v1/snapshot/list', callback);
+    doGetRequest('/v1/snapshot/list', callback);
   },
   /**
    * Create a new SSH Key.
@@ -693,7 +701,7 @@ module.exports = {
    * @param callback
    */
   getSshKeys: function (callback) {
-    doRequest('/v1/sshkey/list', callback);
+    doGetRequest('/v1/sshkey/list', callback);
   },
   /**
    * Update an existing SSH Key. Note that this will only update newly installed machines.
@@ -727,7 +735,7 @@ module.exports = {
    * @param callback
    */
   getStartupScripts: function (callback) {
-    doRequest('/v1/startupscript/list', callback);
+    doGetRequest('/v1/startupscript/list', callback);
   },
   /**
    * Update an existing startup script.
@@ -758,7 +766,7 @@ module.exports = {
    * @param callback
    */
   getUsers: function (callback) {
-    doRequest('/v1/user/list', callback);
+    doGetRequest('/v1/user/list', callback);
   },
   /**
    * Update the details for a user.
