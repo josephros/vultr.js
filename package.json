@@ -1,6 +1,6 @@
 {
   "name": "vultr.js",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A node.js vultr api wrapper.",
   "main": "index.js",
   "scripts": {

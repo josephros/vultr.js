@@ -33,7 +33,7 @@ function doGetRequest(action, callback) {
     try {
       if (error) throw error;
       checkError(response.statusCode);
-      callback(null, JSON.parse(body));
+      callback(null, body ? JSON.parse(body) : null);
     } catch (e) {
       callback(e, body);
     }
@@ -56,7 +56,7 @@ function doPostRequest(action, data, callback) {
     try {
       if (error) throw error;
       checkError(response.statusCode);
-      callback(null, JSON.parse(body));
+      callback(null, body ? JSON.parse(body) : null);
     } catch (e) {
       callback(e, body);
     }
