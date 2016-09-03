@@ -35,7 +35,7 @@ function doGetRequest(action, callback) {
       checkError(response.statusCode);
       callback(null, JSON.parse(body));
     } catch (e) {
-      callback(e, JSON.parse(body));
+      callback(e, body);
     }
   })
 }
@@ -58,7 +58,7 @@ function doPostRequest(action, data, callback) {
       checkError(response.statusCode);
       callback(null, JSON.parse(body));
     } catch (e) {
-      callback(e, JSON.parse(body));
+      callback(e, body);
     }
   })
 }
