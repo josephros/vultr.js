@@ -506,7 +506,7 @@ module.exports = {
     doGetRequest('/v1/server/list', callback);
   },
   findServers: function (data, callback) {
-    doGetRequest('/v1/server/list', data, callback);
+    doPostRequest('/v1/server/list', data, callback);
   },
   /**
    * List the IPv4 information of a virtual machine.
