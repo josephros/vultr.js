@@ -35,6 +35,9 @@ function doGetRequest(action, callback) {
       checkError(response.statusCode);
       callback(null, body ? JSON.parse(body) : null);
     } catch (e) {
+      console.log("Got error with a vultr request. Response body:");
+      console.log(body);
+
       callback(e, body);
     }
   })
@@ -58,6 +61,9 @@ function doPostRequest(action, data, callback) {
       checkError(response.statusCode);
       callback(null, body ? JSON.parse(body) : null);
     } catch (e) {
+      console.log("Got error with a vultr request. Response body:");
+      console.log(body);
+
       callback(e, body);
     }
   })
@@ -498,6 +504,9 @@ module.exports = {
    */
   getServers: function (callback) {
     doGetRequest('/v1/server/list', callback);
+  },
+  findServers: function (data, callback) {
+    doGetRequest('/v1/server/list', data, callback);
   },
   /**
    * List the IPv4 information of a virtual machine.
